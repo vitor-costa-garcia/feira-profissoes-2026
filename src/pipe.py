@@ -15,6 +15,7 @@ from src.env import (
 
 class Pipe:
     def __init__(self, screen):
+        self.scored = False
         self.pipe_opening = np.random.randint(PIPE_MIN_OPEN_Y, PIPE_MAX_OPEN_Y)
 
         # Calculate exactly where the gap starts and ends to make the math easier to read

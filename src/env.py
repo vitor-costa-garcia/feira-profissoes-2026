@@ -9,9 +9,9 @@ G = 2000
 ANG_G = 1000
 
 # Fricção do ar
-AIR_FRIC = 10000
+AIR_FRIC = 100
 # "Fricção angular" do ar
-ANG_AIR_FRIC = 10000
+ANG_AIR_FRIC = 100
 
 # Intervalo de tempo entre canos (s)
 INTERVAL_PIPES_SEC = 2
@@ -27,15 +27,12 @@ PIPE_MIN_OPEN_Y = 280
 PIPE_MAX_OPEN_Y = 880
 
 # Grossura do pássaro (px)
-BIRD_THICK = 40
+BIRD_THICK = 50
 # Comprimento do pássaro (px)
-BIRD_WIDTH = 100
+BIRD_WIDTH = 80
 # Posição horizontal que o pássaro fica (px)
-BIRD_X = 250
+BIRD_X = 300
 
 # Sprites Cano
 PIPE_IMG_UP = pygame.image.load("sprites/backgrounds/pipe-green.png").convert_alpha()
 PIPE_IMG_DOWN = pygame.transform.rotate(PIPE_IMG_UP, 180)
-
-# Sprite pássaro
-BIRD_IMG = pygame.image.load("sprites/birds/benedito/benedito-upflap.png").convert_alpha()

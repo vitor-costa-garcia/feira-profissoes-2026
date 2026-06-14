@@ -6,6 +6,17 @@ from pygame.version import ver
 pygame.init()
 screen = pygame.display.set_mode((1920, 1080))
 
+# fontes
+font = pygame.font.Font(
+    "fonts/PressStart2P-Regular.ttf",
+    48
+)
+
+small_font = pygame.font.Font(
+    "fonts/PressStart2P-Regular.ttf",
+    24
+)
+
 from src.bird import Bird
 from src.env import *
 from src.pipe import Pipe
@@ -19,6 +30,7 @@ debug = True
 dt = 0  # Fração de tempo entre frames frame (começa em 0)
 t = 0  # Contador de frames (Reseta a cada 60)
 timer = 0  # Contador de segundos
+score = 0
 # --------------------------------------------------------
 
 # Variáveis lógica do jogo -------------------------------
@@ -29,7 +41,7 @@ current_pipe = None
 while running:
     # Preenchimento da tela (fundo)
     screen.fill("#4dbeff")
-
+   
     # Event listener-------------------------
     for event in pygame.event.get():
         # Botão X da tela
@@ -38,8 +50,20 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             # Pulo
-            if event.key == pygame.K_b and player.alive:
-                player.jump()
+            if event.key == pygame.K_SPACE:
+
+                if player.alive:
+                    player.jump()
+
+                else:
+                    player = Bird(screen)
+
+                    pipe_queue.clear()
+
+                    timer = 0
+                    t = 0
+                    current_pipe = None
+                    score = 0
 
     # --------------------------------------
 
@@ -69,7 +93,15 @@ while running:
             # Verifica se houve colisão do pássaro com o cano
             if pipe_q.check_collision(player.hitbox):
                 print("COLISÃO!")
+                print("score:", score)
                 player.alive = False
+            
+            if (
+                not pipe_q.scored
+                and pipe_q.up_pipe.x + PIPE_WIDTH < BIRD_X
+            ):
+                score += 1
+                pipe_q.scored = True
 
         # Exibe os canos na tela
         pipe_q.draw(screen)
@@ -86,10 +118,63 @@ while running:
                 break
 
         # Distancia atual até o proximo cano relevante
-        print(current_pipe.up_pipe.x)
+        # print(current_pipe.up_pipe.x)
 
     # -------------------------------------------------------------------
+    # score
+    score_text = font.render(
+        str(score),
+        True,
+        (255, 255, 255)
+    )
 
+    screen.blit(
+    score_text,
+    score_text.get_rect(
+        center=(
+            int(screen.get_width() * 0.85),
+            int(screen.get_height() * 0.13)
+        )
+    )
+    )    
+        
+    # texto de game over
+    if not player.alive:
+        overlay = pygame.Surface(
+            (screen.get_width(), screen.get_height()),
+            pygame.SRCALPHA
+        )
+
+        overlay.fill((0, 0, 0, 150))
+
+        screen.blit(overlay, (0, 0))
+
+        game_over_text = font.render(
+            "GAME OVER",
+            True,
+            (255, 255, 255)
+        )
+
+        restart_text = small_font.render(
+            "Pressione ESPAÇO para reiniciar",
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(
+            game_over_text,
+            game_over_text.get_rect(
+                center=(screen.get_width() // 2, 400)
+            )
+        )
+
+        screen.blit(
+            restart_text,
+            restart_text.get_rect(
+                center=(screen.get_width() // 2, 500)
+            )
+        )
+    
     # flip() para atualizar o display
     pygame.display.flip()
 
