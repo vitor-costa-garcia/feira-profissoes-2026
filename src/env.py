@@ -34,8 +34,8 @@ BIRD_WIDTH = 100
 BIRD_X = 250
 
 # Sprites Cano
-PIPE_IMG_UP = pygame.image.load("sprites/pipe-green.png").convert_alpha()
+PIPE_IMG_UP = pygame.image.load("sprites/backgrounds/pipe-green.png").convert_alpha()
 PIPE_IMG_DOWN = pygame.transform.rotate(PIPE_IMG_UP, 180)
 
 # Sprite pássaro
-BIRD_IMG = pygame.image.load("sprites/mascote_uel.png").convert_alpha()
+BIRD_IMG = pygame.image.load("sprites/birds/benedito/benedito-upflap.png").convert_alpha()

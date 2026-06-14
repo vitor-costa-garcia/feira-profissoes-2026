@@ -18,7 +18,7 @@ class Bird:
     def __init__(self, screen):
         self.alive = True
         self.started = False
-        self.img = pygame.image.load("sprites/mascote_uel.png").convert_alpha()
+        self.img = pygame.image.load("sprites/birds/benedito/benedito-upflap.png").convert_alpha()
 
         self.pos = pygame.Vector2(BIRD_X, screen.get_height() / 2 - BIRD_THICK)
         self.vert_speed = 0
