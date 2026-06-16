@@ -11,7 +11,7 @@ ANG_G = 1000
 # Fricção do ar
 AIR_FRIC = 100
 # "Fricção angular" do ar
-ANG_AIR_FRIC = 100
+ANG_AIR_FRIC = 1000
 
 # Intervalo de tempo entre canos (s)
 INTERVAL_PIPES_SEC = 2

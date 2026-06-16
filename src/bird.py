@@ -37,7 +37,7 @@ class Bird:
             self.ang_acc = max(-ANG_G, self.ang_acc - dt * ANG_AIR_FRIC)
             self.ang_speed += self.ang_acc * dt
             # Atualização da rotação
-            self.angle = max(-10, self.angle + (self.ang_speed * dt))
+            self.angle = max(-30, self.angle + (self.ang_speed * dt))
 
             # Atualizando aceleração e velocidade vertical
             self.vert_acc = max(G, self.vert_acc + dt * AIR_FRIC)
@@ -66,7 +66,7 @@ class Bird:
         # Angulos
         self.ang_speed = 10
         self.ang_acc = 10
-        self.angle = 10
+        self.angle = 30
 
     def draw(self, screen):
         # Animação simples
