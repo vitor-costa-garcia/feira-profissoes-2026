@@ -3,8 +3,6 @@ import pygame
 
 from src.env import (
     BIRD_WIDTH,
-    PIPE_IMG_DOWN,
-    PIPE_IMG_UP,
     PIPE_MAX_OPEN_Y,
     PIPE_MIN_OPEN_Y,
     PIPE_OPEN_SIZE,
@@ -25,9 +23,12 @@ class Pipe:
         # Give both pipes a fixed massive height so the image never stretches differently
         self.fixed_height = 800
 
+        # Screen dimensions
+        screen_width = screen.get_width() if screen else 1920
+
         # Top pipe: Starts way off-screen (-fixed_height) and hangs down to gap_top
         self.up_pipe = pygame.Rect(
-            screen.get_width(),
+            screen_width,
             gap_top - self.fixed_height,
             PIPE_WIDTH,
             self.fixed_height,
@@ -35,19 +36,26 @@ class Pipe:
 
         # Bottom pipe: Starts at gap_bottom and goes down
         self.down_pipe = pygame.Rect(
-            screen.get_width(), gap_bottom, PIPE_WIDTH, self.fixed_height
+            screen_width, gap_bottom, PIPE_WIDTH, self.fixed_height
         )
 
         self.finished = False
 
-        # PRO TIP: Scale your images ONCE in __init__ instead of every frame in draw().
-        # This saves a ton of CPU power!
-        self.top_img = pygame.transform.scale(
-            PIPE_IMG_DOWN, (PIPE_WIDTH, self.fixed_height)
-        )
-        self.bottom_img = pygame.transform.scale(
-            PIPE_IMG_UP, (PIPE_WIDTH, self.fixed_height)
-        )
+        # Carrega assets internamente apenas se necessário
+        self.top_img = None
+        self.bottom_img = None
+        if screen:
+            pipe_img_up = pygame.image.load("sprites/backgrounds/pipe-green.png").convert_alpha()
+            pipe_img_down = pygame.transform.rotate(pipe_img_up, 180)
+
+            # PRO TIP: Scale your images ONCE in __init__ instead of every frame in draw().
+            # This saves a ton of CPU power!
+            self.top_img = pygame.transform.scale(
+                pipe_img_down, (PIPE_WIDTH, self.fixed_height)
+            )
+            self.bottom_img = pygame.transform.scale(
+                pipe_img_up, (PIPE_WIDTH, self.fixed_height)
+            )
 
     def update(self, dt):
         self.up_pipe.x -= PIPE_SPEED * dt

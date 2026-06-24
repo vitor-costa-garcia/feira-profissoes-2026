@@ -33,6 +33,12 @@ BIRD_WIDTH = 80
 # Posição horizontal que o pássaro fica (px)
 BIRD_X = 300
 
-# Sprites Cano
-PIPE_IMG_UP = pygame.image.load("sprites/backgrounds/pipe-green.png").convert_alpha()
-PIPE_IMG_DOWN = pygame.transform.rotate(PIPE_IMG_UP, 180)
+# Sprites Cano (carregados dinamicamente)
+PIPE_IMG_UP = None
+PIPE_IMG_DOWN = None
+
+def load_assets():
+    global PIPE_IMG_UP, PIPE_IMG_DOWN
+    if PIPE_IMG_UP is None:
+        PIPE_IMG_UP = pygame.image.load("sprites/backgrounds/pipe-green.png").convert_alpha()
+        PIPE_IMG_DOWN = pygame.transform.rotate(PIPE_IMG_UP, 180)

@@ -6,6 +6,9 @@ from pygame.version import ver
 pygame.init()
 screen = pygame.display.set_mode((1920, 1080))
 
+from src.env import load_assets
+load_assets()
+
 # fontes
 font = pygame.font.Font(
     "fonts/PressStart2P-Regular.ttf",
