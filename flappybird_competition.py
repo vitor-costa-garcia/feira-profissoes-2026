@@ -69,8 +69,8 @@ robot_t = 0
 robot_frame_count = 0
 
 def get_robot_state():
-    if len(robot_pipe_queue) > 0:
-        next_pipe = robot_pipe_queue[0]
+    if len(pipe_queue) > 0:
+        next_pipe = pipe_queue[0]
         dist_x = (next_pipe.up_pipe.x - BIRD_X) / screen.get_width()
         pipe_center_y = (next_pipe.up_pipe.y + PIPE_OPEN_SIZE / 2) / screen.get_height()
     else:
@@ -130,14 +130,33 @@ while running:
                 elif game_state == PLAYING:
                     if player.alive:
                         player.jump()
-                    else:
-                        # Pássaro morreu, volta para o menu
-                        game_state = MENU
             
             elif event.key == pygame.K_1 and game_state == MENU:
                 game_mode = "human"
             elif event.key == pygame.K_2 and game_state == MENU:
                 game_mode = "competition"
+            elif event.key == pygame.K_y:
+                if game_state == PLAYING and not player.alive:
+                    # Reinicia o jogo
+                    game_state = PLAYING
+                    player = Bird(screen)
+                    pipe_queue.clear()
+                    timer = 0
+                    t = 0
+                    current_pipe = None
+                    score = 0
+                    
+                    if game_mode == "competition":
+                        robot_bird = Bird(screen)
+                        robot_pipe_queue.clear()
+                        robot_timer = 0
+                        robot_t = 0
+                        robot_current_pipe = None
+                        robot_score = 0
+                        robot_frame_count = 0
+            elif event.key == pygame.K_u:
+                # Volta para o menu
+                game_state = MENU
 
     # --------------------------------------
 
@@ -198,11 +217,7 @@ while running:
 
         # Atualiza e exibe o pássaro humano -------------------
         player.update(screen, dt)
-        # No modo competição, aplica tint azul ao pássaro humano
-        if game_mode == "competition":
-            player.draw(screen, tint_color=(100, 100, 255, 100))  # Tint azul
-        else:
-            player.draw(screen)
+        player.draw(screen)
         # ----------------------------------------------
 
         # Loop de tempo (executa a cada 1 segundo) -----------------------
@@ -280,6 +295,10 @@ while running:
             if robot_action == 1:
                 robot_bird.jump()
             
+            # Debug: mostra ação do robô a cada 60 frames
+            if robot_frame_count % 60 == 0:
+                print(f"Robô action: {robot_action}, alive: {robot_bird.alive}, started: {robot_bird.started}")
+            
             # Atualiza pássaro robô
             robot_bird.update(screen, dt)
             
@@ -295,8 +314,8 @@ while running:
                         robot_score += 1
                         pipe_q.scored = True
             
-            # Desenha pássaro robô
-            robot_bird.draw(screen)
+            # Desenha pássaro robô (transparente)
+            robot_bird.draw(screen, tint_color=(255, 255, 255, 128))  # Tint branco com transparência
             
             # Score do robô
             robot_score_text = font.render(
@@ -310,28 +329,11 @@ while running:
                 robot_score_text.get_rect(
                     center=(
                         int(screen.get_width() * 0.85),
-                        int(screen.get_height() * 0.25)
+                        int(screen.get_height() * 0.20)
                     )
                 )
             )
             
-            # Labels
-            human_label = small_font.render("HUMANO", True, (255, 255, 255))
-            robot_label = small_font.render("ROBÔ DQN", True, (255, 100, 100))
-            
-            screen.blit(
-                human_label,
-                human_label.get_rect(
-                    center=(int(screen.get_width() * 0.85), int(screen.get_height() * 0.08))
-                )
-            )
-            
-            screen.blit(
-                robot_label,
-                robot_label.get_rect(
-                    center=(int(screen.get_width() * 0.85), int(screen.get_height() * 0.20))
-                )
-            )
         
         # Mostra game over se o pássaro morreu (jogo congelado)
         if not player.alive:
@@ -346,7 +348,7 @@ while running:
             )
             
             restart_text = small_font.render(
-                "Pressione ESPAÇO para reiniciar",
+                "Pressione Y para reiniciar | U para voltar ao menu",
                 True,
                 (255, 255, 255)
             )
