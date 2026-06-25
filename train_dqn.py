@@ -16,7 +16,7 @@ def train_dqn(episodes=1000, render=False):
     
     # Cria ambiente e agente
     env = FlappyEnv(screen)
-    state_size = 4  # [bird_y, bird_vel, dist_x, pipe_center_y]
+    state_size = 5  # [bird_y, bird_vel, bird_acc, dist_x, pipe_center_y]
     action_size = 2  # [0: não pular, 1: pular]
     agent = DQNAgent(state_size, action_size)
     
@@ -97,4 +97,4 @@ def train_dqn(episodes=1000, render=False):
 
 
 if __name__ == "__main__":
-    train_dqn(episodes=500, render=False)
+    train_dqn(episodes=10000, render=False)  # Aumentado para melhor aprendizado
