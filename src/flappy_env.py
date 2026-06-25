@@ -26,7 +26,7 @@ class FlappyEnv:
         return self.get_state()
     
     def get_state(self):
-        # Estado: [posição y do pássaro, velocidade vertical, 
+        # Estado: [posição y do pássaro, velocidade vertical, aceleração vertical,
         #          distância horizontal até o próximo cano, 
         #          altura do centro da abertura do cano]
         
@@ -35,6 +35,7 @@ class FlappyEnv:
         
         bird_y = self.bird.pos.y / screen_height
         bird_vel = self.bird.vert_speed / 1000
+        bird_acc = self.bird.vert_acc / 10000
         
         if len(self.pipe_queue) > 0:
             next_pipe = self.pipe_queue[0]
@@ -44,7 +45,7 @@ class FlappyEnv:
             dist_x = 1.0
             pipe_center_y = 0.5
             
-        return np.array([bird_y, bird_vel, dist_x, pipe_center_y], dtype=np.float32)
+        return np.array([bird_y, bird_vel, bird_acc, dist_x, pipe_center_y], dtype=np.float32)
     
     def step(self, action):
         # action: 0 = não pular, 1 = pular

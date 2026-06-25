@@ -79,12 +79,13 @@ def get_robot_state():
     
     bird_y = robot_bird.pos.y / screen.get_height()
     bird_vel = robot_bird.vert_speed / 1000
+    bird_acc = robot_bird.vert_acc / 10000
     
-    return np.array([bird_y, bird_vel, dist_x, pipe_center_y], dtype=np.float32)
+    return np.array([bird_y, bird_vel, bird_acc, dist_x, pipe_center_y], dtype=np.float32)
 
 def load_dqn_agent():
     global agent
-    state_size = 4
+    state_size = 5
     action_size = 2
     agent = DQNAgent(state_size, action_size)
     
@@ -294,10 +295,6 @@ while running:
             
             if robot_action == 1:
                 robot_bird.jump()
-            
-            # Debug: mostra ação do robô a cada 60 frames
-            if robot_frame_count % 60 == 0:
-                print(f"Robô action: {robot_action}, alive: {robot_bird.alive}, started: {robot_bird.started}")
             
             # Atualiza pássaro robô
             robot_bird.update(screen, dt)
