@@ -11,7 +11,7 @@ ANG_G = 1000
 # Fricção do ar
 AIR_FRIC = 100
 # "Fricção angular" do ar
-ANG_AIR_FRIC = 100
+ANG_AIR_FRIC = 1000
 
 # Intervalo de tempo entre canos (s)
 INTERVAL_PIPES_SEC = 2
@@ -33,12 +33,20 @@ BIRD_WIDTH = 80
 # Posição horizontal que o pássaro fica (px)
 BIRD_X = 300
 
-# Sprites Cano (carregados dinamicamente)
-PIPE_IMG_UP = None
-PIPE_IMG_DOWN = None
+# Sprites Cano
+PIPE_IMG_UP = pygame.image.load("sprites/backgrounds/pipe-green.png").convert_alpha()
+PIPE_IMG_DOWN = pygame.transform.rotate(PIPE_IMG_UP, 180)
+#Start img
+START_IMG_ORIGINAL = pygame.image.load("sprites/backgrounds/message.png").convert_alpha()
+START_IMG = pygame.transform.scale_by(START_IMG_ORIGINAL, 2)
+BACKGROUND_IMG = pygame.image.load("sprites/backgrounds/background-main.jpg").convert()
+# Carrega a imagem original
+GAMEOVER_IMG = pygame.image.load("sprites/backgrounds/gameover.png").convert_alpha()
 
-def load_assets():
-    global PIPE_IMG_UP, PIPE_IMG_DOWN
-    if PIPE_IMG_UP is None:
-        PIPE_IMG_UP = pygame.image.load("sprites/backgrounds/pipe-green.png").convert_alpha()
-        PIPE_IMG_DOWN = pygame.transform.rotate(PIPE_IMG_UP, 180)
+# Pega o tamanho original da imagem
+largura_original = GAMEOVER_IMG.get_width()
+altura_original = GAMEOVER_IMG.get_height()
+escala = 3
+novo_tamanho = (int(largura_original * escala), int(altura_original * escala))
+GAMEOVER_IMG = pygame.transform.scale(GAMEOVER_IMG, novo_tamanho)
+

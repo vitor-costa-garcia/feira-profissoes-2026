@@ -6,19 +6,9 @@ from pygame.version import ver
 pygame.init()
 screen = pygame.display.set_mode((1920, 1080))
 
-from src.env import load_assets
-load_assets()
-
 # fontes
-font = pygame.font.Font(
-    "fonts/PressStart2P-Regular.ttf",
-    48
-)
-
-small_font = pygame.font.Font(
-    "fonts/PressStart2P-Regular.ttf",
-    24
-)
+font = pygame.font.Font("fonts/PressStart2P-Regular.ttf", 48)
+small_font = pygame.font.Font("fonts/PressStart2P-Regular.ttf", 24)
 
 from src.bird import Bird
 from src.env import *
@@ -34,55 +24,55 @@ dt = 0  # Fração de tempo entre frames frame (começa em 0)
 t = 0  # Contador de frames (Reseta a cada 60)
 timer = 0  # Contador de segundos
 score = 0
-# --------------------------------------------------------
+
+# --- OTIMIZAÇÃO: Criando o filtro escuro apenas UMA vez aqui fora ---
+overlay = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
+overlay.fill((0, 0, 0, 150)) # Cor Preta com 150 de opacidade (Alpha)
+# -------------------------------------------------------------------
 
 # Variáveis lógica do jogo -------------------------------
 pipe_queue = list()
 current_pipe = None
 # --------------------------------------------------------
 
+
 while running:
     # Preenchimento da tela (fundo)
-    screen.fill("#4dbeff")
-   
+    screen.blit(BACKGROUND_IMG, (0, 0))
+    
     # Event listener-------------------------
     for event in pygame.event.get():
-        # Botão X da tela
         if event.type == pygame.QUIT:
             running = False
 
         if event.type == pygame.KEYDOWN:
-            # Pulo
             if event.key == pygame.K_SPACE:
-
-                if player.alive:
+                # Se o jogo ainda não começou, inicia ele ao pressionar ESPAÇO
+                if not player.started:
+                    player.started = True
+                elif player.alive:
                     player.jump()
-
                 else:
                     player = Bird(screen)
-
                     pipe_queue.clear()
-
                     timer = 0
                     t = 0
                     current_pipe = None
                     score = 0
-
     # --------------------------------------
 
-    # Atualiza e exibe o pássaro -------------------
-    player.update(screen, dt)
-    player.draw(screen)
+   
+    if player.started:
+        player.update(screen, dt)
+        player.draw(screen)
     # ----------------------------------------------
 
     # Loop de tempo (executa a cada 1 segundo) -----------------------
     if t % 60 == 0:
         if timer % INTERVAL_PIPES_SEC == 0 and (player.alive and player.started):
-            # Cria um cano e adiciona na fila de canos
             new_pipe = Pipe(screen)
             pipe_queue.append(new_pipe)
 
-        # Incrementa o temporizador e reseta o contador de ticks
         timer += 1
         t = 0
     # -----------------------------------------------------------------
@@ -90,10 +80,8 @@ while running:
     # Atualização dos canos -------------------------------------------
     for pipe_q in pipe_queue:
         if player.alive and player.started:
-            # Atualiza a posição dos canos
             pipe_q.update(dt)
 
-            # Verifica se houve colisão do pássaro com o cano
             if pipe_q.check_collision(player.hitbox):
                 print("COLISÃO!")
                 print("score:", score)
@@ -106,7 +94,6 @@ while running:
                 score += 1
                 pipe_q.scored = True
 
-        # Exibe os canos na tela
         pipe_q.draw(screen)
 
     # Remove os canos que saem da tela
@@ -120,69 +107,41 @@ while running:
                 current_pipe = pip
                 break
 
-        # Distancia atual até o proximo cano relevante
-        # print(current_pipe.up_pipe.x)
-
     # -------------------------------------------------------------------
-    # score
-    score_text = font.render(
-        str(score),
-        True,
-        (255, 255, 255)
-    )
-
-    screen.blit(
-    score_text,
-    score_text.get_rect(
-        center=(
-            int(screen.get_width() * 0.85),
-            int(screen.get_height() * 0.13)
-        )
-    )
-    )    
+    # Modificado: O score agora só é renderizado e desenhado se o jogo começou
+    if player.started:
+        score_text = font.render(str(score), True, (255, 255, 255))
+        screen.blit(
+            score_text,
+            score_text.get_rect(
+                center=(int(screen.get_width() * 0.85), int(screen.get_height() * 0.13))
+            )
+        )    
+        
+    # Tela de início (Aparece apenas quando não iniciado)
+    if not player.started:
+        screen.blit(overlay, (0, 0))
+        screen.blit(START_IMG, START_IMG.get_rect(center=(screen.get_width() // 2, 500)))
         
     # texto de game over
-    if not player.alive:
-        overlay = pygame.Surface(
-            (screen.get_width(), screen.get_height()),
-            pygame.SRCALPHA
-        )
-
-        overlay.fill((0, 0, 0, 150))
-
+    if not player.alive and player.started:
+        # CORRIGIDO: Desenha o filtro escuro que criamos lá fora
         screen.blit(overlay, (0, 0))
 
-        game_over_text = font.render(
-            "GAME OVER",
-            True,
-            (255, 255, 255)
-        )
+        screen.blit(GAMEOVER_IMG, GAMEOVER_IMG.get_rect(center=(screen.get_width() // 2, 300)))
+       
+        restart_text = small_font.render("Pressione o espaço para reiniciar", True, (255, 255, 255))
 
-        restart_text = small_font.render(
-            "Pressione ESPAÇO para reiniciar",
-            True,
-            (255, 255, 255)
-        )
-
-        screen.blit(
-            game_over_text,
-            game_over_text.get_rect(
-                center=(screen.get_width() // 2, 400)
-            )
-        )
-
+        
         screen.blit(
             restart_text,
-            restart_text.get_rect(
-                center=(screen.get_width() // 2, 500)
-            )
+            restart_text.get_rect(center=(screen.get_width() // 2, 500))
         )
     
     # flip() para atualizar o display
     pygame.display.flip()
 
     # limita FPS em 60
-    # dt diferença de tempo entre último frame. Usado para fisica
     dt = clock.tick(60) / 1000
     t += 1
 
