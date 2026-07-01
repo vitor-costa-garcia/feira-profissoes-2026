@@ -17,7 +17,7 @@ class Bird:
     def __init__(self, screen):
         self.alive = True
         self.started = False
-        
+
         if screen:
             screen_height = screen.get_height()
         else:
@@ -34,9 +34,15 @@ class Bird:
         self.frames = None
         if screen:
             self.frames = [
-                pygame.image.load("sprites/birds/benedito/benedito-upflap.png").convert_alpha(),
-                pygame.image.load("sprites/birds/benedito/benedito-midflap.png").convert_alpha(),
-                pygame.image.load("sprites/birds/benedito/benedito-downflap.png").convert_alpha(),
+                pygame.image.load(
+                    "sprites/birds/benedito/benedito-upflap.png"
+                ).convert_alpha(),
+                pygame.image.load(
+                    "sprites/birds/benedito/benedito-midflap.png"
+                ).convert_alpha(),
+                pygame.image.load(
+                    "sprites/birds/benedito/benedito-downflap.png"
+                ).convert_alpha(),
             ]
 
     def update(self, screen, dt):
@@ -61,22 +67,22 @@ class Bird:
             self.alive = False
 
         # Impede que o pássaro voe para fora da tela
-        if self.pos.y <= 40:
-            self.pos.y = 40
-            self.vert_speed = -50
+        # if self.pos.y <= 40:
+        #     self.pos.y = 40
+        #     self.vert_speed = -50
 
     def jump(self):
         self.started = True
 
         # Vertical
         self.vert_speed = -700
-        self.vert_acc = -13000
+        # self.vert_acc = -13000
 
         # Angulos
         self.ang_speed = 10
         self.ang_acc = 10
         self.angle = 10
-    
+
     def get_hitbox(self):
         # Calcula hitbox sem desenhar (para treinamento)
         if self.frames:
@@ -88,7 +94,12 @@ class Bird:
             return tighter_hitbox
         else:
             # Se não há frames (sem screen), cria hitbox simples baseada em rect
-            hitbox = pygame.Rect(self.pos.x - BIRD_WIDTH/2, self.pos.y - BIRD_THICK/2, BIRD_WIDTH, BIRD_THICK)
+            hitbox = pygame.Rect(
+                self.pos.x - BIRD_WIDTH / 2,
+                self.pos.y - BIRD_THICK / 2,
+                BIRD_WIDTH,
+                BIRD_THICK,
+            )
             tighter_hitbox = hitbox.inflate(-15, -30)
             return tighter_hitbox
 
@@ -105,13 +116,13 @@ class Bird:
         # rect_surface.fill("red")
 
         scaled_bird = pygame.transform.scale(bird_img, (BIRD_WIDTH, BIRD_THICK))
-        
+
         # Aplica tint se fornecido
         if tint_color:
             tint_surface = pygame.Surface((BIRD_WIDTH, BIRD_THICK), pygame.SRCALPHA)
             tint_surface.fill(tint_color)
             scaled_bird.blit(tint_surface, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
-        
+
         # Rotaciona a imagem do pássaro conforme  ele cai ou pula e pega o retângulo para hitbox
         rotated_surface = pygame.transform.rotate(scaled_bird, self.angle)
         rotated_player = rotated_surface.get_rect(center=self.pos)
@@ -131,5 +142,3 @@ class Bird:
             pygame.draw.rect(screen, (255, 0, 0), rotated_player, 2)
 
             pygame.draw.rect(screen, (255, 0, 0), rotated_player, 2)
-
-        
